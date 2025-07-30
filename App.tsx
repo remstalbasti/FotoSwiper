@@ -391,6 +391,16 @@ const App: React.FC = () => {
               await photoService.deletePhoto(photo.filename);
               break;
       }
+      setSelectedCollection(prev => {
+        if (!prev) return null;
+        if (photo.source === 'local') {
+          URL.revokeObjectURL(photo.url);
+          if (photo.thumbnailUrl.startsWith('blob:')) {
+            URL.revokeObjectURL(photo.thumbnailUrl);
+          }
+        }
+        return { ...prev, photos: prev.photos.filter(p => p.id !== photo.id) };
+      });
   };
 
   const handleMovePhotoToAlbum = async (photo: Photo, albumId: string): Promise<void> => {
@@ -405,6 +415,15 @@ const App: React.FC = () => {
               await photoService.movePhotoToAlbum(photo.filename, albumId);
               break;
        }
+       setSelectedCollection(prev => {
+          if (!prev) return null;
+          return {
+              ...prev,
+              photos: prev.photos.map(p => 
+                  p.id === photo.id ? { ...p, path: albumId } : p
+              )
+          };
+       });
   };
 
   const handleRenamePhoto = async (photo: Photo, newName: string): Promise<Photo> => {

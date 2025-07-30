@@ -59,7 +59,8 @@ const SwiperView: React.FC<SwiperViewProps> = ({
     try {
       await onDeletePhoto(photo);
       console.log(`Gelöscht: ${photo.filename}`);
-      removeTopCard();
+      // Das manuelle Vorrücken der Karte ist nicht mehr nötig.
+      // Der Parent-Component entfernt das Foto, der Re-Render zeigt die nächste Karte.
     } catch(e) {
       console.error("Löschen fehlgeschlagen, Karte wird nicht entfernt.", e);
       alert(`Das Foto ${photo.filename} konnte nicht gelöscht/archiviert werden.`);
