@@ -22,6 +22,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onSwipe, isTop, swipeToDel
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   
   const getBaseName = (filename: string, isFavorite?: boolean) => {
     let name = filename;
@@ -62,6 +63,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onSwipe, isTop, swipeToDel
   const leftOpacity = useTransform(x, [-20, -100], [0, 1]);
 
   const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: { offset: { x: number, y: number }, velocity: { x: number, y: number } }) => {
+    setIsDragging(false);
     if (Math.abs(info.offset.x) > 100) {
       onSwipe(info.offset.x > 0 ? 'right' : 'left');
     }
@@ -137,7 +139,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onSwipe, isTop, swipeToDel
   const rightActionStyle = swipeToDeleteDirection === 'right' ? 'text-red-500 border-red-500' : 'text-green-500 border-green-500';
   const leftActionStyle = swipeToDeleteDirection === 'left' ? 'text-red-500 border-red-500' : 'text-green-500 border-green-500';
 
-  const canDrag = isTop && photo.type === 'image';
+  const canDrag = isTop;
 
   return (
     <motion.div
@@ -154,6 +156,7 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onSwipe, isTop, swipeToDel
         className={`relative w-full h-full shadow-2xl rounded-2xl bg-brand-secondary overflow-hidden ${canDrag ? 'cursor-grab active:cursor-grabbing' : ''}`}
         drag={canDrag ? "x" : false}
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+        onDragStart={() => setIsDragging(true)}
         onDragEnd={handleDragEnd}
         onMouseDown={handleMouseDown}
         style={{
@@ -161,6 +164,8 @@ const PhotoCard: React.FC<PhotoCardProps> = ({ photo, onSwipe, isTop, swipeToDel
           rotate,
         }}
       >
+        {isDragging && photo.type === 'video' && <div className="absolute inset-0 z-10" />}
+
         {photo.type === 'image' ? (
           <img
             src={photo.url}
