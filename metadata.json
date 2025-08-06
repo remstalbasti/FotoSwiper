@@ -1,0 +1,7 @@
+{
+  "name": "Foto-Swiper",
+  "description": "Eine einfache Web-App zum Sortieren von Fotos durch Wischen (Swipen).",
+  "requestFramePermissions": [
+    "fileSystem"
+  ]
+}
