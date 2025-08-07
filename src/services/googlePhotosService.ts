@@ -12,6 +12,26 @@ const SCOPES = [
     'https://www.googleapis.com/auth/photoslibrary.sharing'
 ];
 
+// Typen für GAPI-Antworten
+interface GapiResponse<T> {
+  result: T;
+}
+
+interface MediaItemsList {
+  mediaItems?: any[];
+  nextPageToken?: string;
+}
+
+interface AlbumsList {
+  albums?: any[];
+  nextPageToken?: string;
+}
+
+interface CreatedAlbum {
+  id: string;
+  title: string;
+}
+
 
 let tokenClient: any = null;
 let onSignedInChanged: (signedIn: boolean) => void;
@@ -132,7 +152,7 @@ export function signOut(): void {
  * Ruft die letzten Fotos des Benutzers ab.
  */
 export async function getRecentPhotos(count: number = 50): Promise<Photo[]> {
-  const response = await window.gapi.client.photoslibrary.mediaItems.list({ pageSize: count });
+  const response: GapiResponse<MediaItemsList> = await window.gapi.client.photoslibrary.mediaItems.list({ pageSize: count });
   const items = response.result.mediaItems || [];
   return items
     .filter((item: any) => item.mediaMetadata) // Filtert leere Metadaten raus
@@ -156,7 +176,7 @@ export async function getAlbums(): Promise<Album[]> {
     let nextPageToken: string | undefined = undefined;
 
     do {
-        const response = await window.gapi.client.photoslibrary.albums.list({
+        const response: GapiResponse<AlbumsList> = await window.gapi.client.photoslibrary.albums.list({
             pageSize: 50,
             pageToken: nextPageToken
         });
@@ -188,7 +208,7 @@ export async function addPhotoToAlbum(photoId: string, albumId: string): Promise
  * Erstellt ein neues Album.
  */
 export async function createAlbum(title: string): Promise<Album> {
-    const response = await window.gapi.client.photoslibrary.albums.create({
+    const response: GapiResponse<CreatedAlbum> = await window.gapi.client.photoslibrary.albums.create({
         album: { title },
     });
     const result = response.result;
