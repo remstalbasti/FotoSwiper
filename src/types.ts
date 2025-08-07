@@ -33,4 +33,11 @@ declare global {
     google?: any; // Für Google Identity Services
     gapi?: any; // Für Google API Client
   }
+
+  // Ergänzt die fehlenden Iterator-Methoden für die File System Access API.
+  interface FileSystemDirectoryHandle {
+    keys(): AsyncIterableIterator<string>;
+    values(): AsyncIterableIterator<FileSystemHandle>;
+    entries(): AsyncIterableIterator<[string, FileSystemHandle]>;
+  }
 }
